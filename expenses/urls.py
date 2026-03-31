@@ -11,4 +11,5 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
 ]
-    
+     path('edit/<int:pk>/', views.edit_transaction, name='edit_transaction'),
+    path('delete/<int:pk>/', views.delete_transaction, name='delete_transaction'),   
