@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('export-csv/', views.export_csv, name='export_csv'),
     path('categories/', views.category_list, name='category_list'),
     path('', views.home, name='home'),
     path('dashboard/', views.dashboard, name='dashboard'),
