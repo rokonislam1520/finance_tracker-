@@ -59,3 +59,24 @@ def transaction_list(request):
 def category_list(request):
     categories = Category.objects.filter(user=request.user)
     return render(request, 'category_list.html', {'categories': categories})
+@login_required
+def edit_transaction(request, pk):
+    transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = TransactionForm(request.POST, instance=transaction, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Transaction updated successfully!")
+            return redirect('transaction_list')
+    else:
+        form = TransactionForm(instance=transaction, user=request.user)
+    return render(request, 'edit_transaction.html', {'form': form, 'transaction': transaction})
+
+@login_required
+def delete_transaction(request, pk):
+    transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
+    if request.method == 'POST':
+        transaction.delete()
+        messages.success(request, "Transaction deleted successfully!")
+        return redirect('transaction_list')
+    return render(request, 'delete_transaction.html', {'transaction': transaction})
