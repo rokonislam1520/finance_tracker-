@@ -41,21 +41,32 @@ def add_transaction(request):
     
     return render(request, 'add_transaction.html', {'form': form})
     @login_required
+@login_required
 def transaction_list(request):
     transactions = Transaction.objects.filter(user=request.user).order_by('-date')
     
-    # Basic filter by type
+    # Filter by type
     transaction_type = request.GET.get('type')
     if transaction_type in ['income', 'expense']:
         transactions = transactions.filter(transaction_type=transaction_type)
     
+    # Date filter
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    if start_date and end_date:
+        transactions = transactions.filter(date__range=[start_date, end_date])
+
+    total_income = transactions.filter(transaction_type='income').aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expense = transactions.filter(transaction_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+
     context = {
         'transactions': transactions,
-        'total_income': transactions.filter(transaction_type='income').aggregate(Sum('amount'))['amount__sum'] or 0,
-        'total_expense': transactions.filter(transaction_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0,
+        'total_income': total_income,
+        'total_expense': total_expense,
+        'start_date': start_date,
+        'end_date': end_date,
     }
     return render(request, 'transaction_list.html', context)
-@login_required
 def category_list(request):
     categories = Category.objects.filter(user=request.user)
     return render(request, 'category_list.html', {'categories': categories})
