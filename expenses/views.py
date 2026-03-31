@@ -40,3 +40,18 @@ def add_transaction(request):
         form = TransactionForm(user=request.user)
     
     return render(request, 'add_transaction.html', {'form': form})
+    @login_required
+def transaction_list(request):
+    transactions = Transaction.objects.filter(user=request.user).order_by('-date')
+    
+    # Basic filter by type
+    transaction_type = request.GET.get('type')
+    if transaction_type in ['income', 'expense']:
+        transactions = transactions.filter(transaction_type=transaction_type)
+    
+    context = {
+        'transactions': transactions,
+        'total_income': transactions.filter(transaction_type='income').aggregate(Sum('amount'))['amount__sum'] or 0,
+        'total_expense': transactions.filter(transaction_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0,
+    }
+    return render(request, 'transaction_list.html', context)
