@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Categories</h2>
+<a href="{% url 'dashboard' %}" class="btn btn-secondary mb-3">Back to Dashboard</a>
+
+<ul class="list-group">
+    {% for cat in categories %}
+    <li class="list-group-item">{{ cat.name }} ({{ cat.type|title }})</li>
+    {% empty %}
+    <li class="list-group-item">No categories yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
