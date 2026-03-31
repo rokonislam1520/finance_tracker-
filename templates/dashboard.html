@@ -1,3 +1,23 @@
+<h4 class="mt-5">Expense Breakdown</h4>
+<canvas id="expenseChart" width="400" height="200"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('expenseChart');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Income', 'Expense'],
+            datasets: [{
+                data: [{{ total_income }}, {{ total_expense }}],
+                backgroundColor: ['#28a745', '#dc3545']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>
 {% extends 'base.html' %}
 
 {% block content %}
