@@ -2,14 +2,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib import messages
+from django.db.models import Sum
+from django.http import HttpResponse
+import csv
+
 from .models import Transaction, Category
 from .forms import TransactionForm
-from django.db.models import Sum
-from django.contrib import messages
 
+# Home
 def home(request):
     return render(request, 'home.html')
 
+# Dashboard
 @login_required
 def dashboard(request):
     transactions = Transaction.objects.filter(user=request.user)
@@ -25,7 +30,8 @@ def dashboard(request):
         'transactions': transactions.order_by('-date')[:5],
     }
     return render(request, 'dashboard.html', context)
-    
+
+# Add Transaction
 @login_required
 def add_transaction(request):
     if request.method == 'POST':
@@ -40,17 +46,16 @@ def add_transaction(request):
         form = TransactionForm(user=request.user)
     
     return render(request, 'add_transaction.html', {'form': form})
-    @login_required
+
+# Transaction List
 @login_required
 def transaction_list(request):
     transactions = Transaction.objects.filter(user=request.user).order_by('-date')
     
-    # Filter by type
     transaction_type = request.GET.get('type')
     if transaction_type in ['income', 'expense']:
         transactions = transactions.filter(transaction_type=transaction_type)
     
-    # Date filter
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     if start_date and end_date:
@@ -67,9 +72,8 @@ def transaction_list(request):
         'end_date': end_date,
     }
     return render(request, 'transaction_list.html', context)
-def category_list(request):
-    categories = Category.objects.filter(user=request.user)
-    return render(request, 'category_list.html', {'categories': categories})
+
+# Edit Transaction
 @login_required
 def edit_transaction(request, pk):
     transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
@@ -81,8 +85,9 @@ def edit_transaction(request, pk):
             return redirect('transaction_list')
     else:
         form = TransactionForm(instance=transaction, user=request.user)
-    return render(request, 'edit_transaction.html', {'form': form, 'transaction': transaction})
+    return render(request, 'edit_transaction.html', {'form': form})
 
+# Delete Transaction
 @login_required
 def delete_transaction(request, pk):
     transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
@@ -91,9 +96,8 @@ def delete_transaction(request, pk):
         messages.success(request, "Transaction deleted successfully!")
         return redirect('transaction_list')
     return render(request, 'delete_transaction.html', {'transaction': transaction})
-import csv
-from django.http import HttpResponse
 
+# Export CSV
 @login_required
 def export_csv(request):
     transactions = Transaction.objects.filter(user=request.user).order_by('-date')
@@ -114,3 +118,33 @@ def export_csv(request):
         ])
     
     return response
+
+# Auth Views
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Account created successfully!")
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
+
+def user_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, "Logged in successfully!")
+            return redirect('dashboard')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+def user_logout(request):
+    logout(request)
+    messages.success(request, "Logged out successfully!")
+    return redirect('login')
