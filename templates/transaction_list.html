@@ -16,6 +16,11 @@
     <div class="col-md-2 d-flex align-items-end">
         <button type="submit" class="btn btn-primary w-100">Filter</button>
     </div>
+        <div class="mb-4">
+    <a href="{% url 'export_csv' %}" class="btn btn-success">
+        <i class="fas fa-download"></i> Export to CSV
+    </a>
+    </div>
     <div class="col-md-2 d-flex align-items-end">
         <a href="{% url 'transaction_list' %}" class="btn btn-secondary w-100">Clear</a>
     </div>
