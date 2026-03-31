@@ -25,7 +25,7 @@ def dashboard(request):
         'transactions': transactions.order_by('-date')[:5],
     }
     return render(request, 'dashboard.html', context)
-
+    
 @login_required
 def add_transaction(request):
     if request.method == 'POST':
@@ -91,3 +91,26 @@ def delete_transaction(request, pk):
         messages.success(request, "Transaction deleted successfully!")
         return redirect('transaction_list')
     return render(request, 'delete_transaction.html', {'transaction': transaction})
+import csv
+from django.http import HttpResponse
+
+@login_required
+def export_csv(request):
+    transactions = Transaction.objects.filter(user=request.user).order_by('-date')
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="transactions.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['Date', 'Type', 'Category', 'Description', 'Amount'])
+    
+    for trans in transactions:
+        writer.writerow([
+            trans.date,
+            trans.transaction_type,
+            trans.category.name,
+            trans.description,
+            trans.amount
+        ])
+    
+    return response
