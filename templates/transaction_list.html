@@ -4,6 +4,22 @@
 <h2 class="mb-4">All Transactions</h2>
 
 <div class="mb-3">
+    <form method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label>Start Date</label>
+        <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
+    </div>
+    <div class="col-md-3">
+        <label>End Date</label>
+        <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+    </div>
+    <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+    <div class="col-md-2 d-flex align-items-end">
+        <a href="{% url 'transaction_list' %}" class="btn btn-secondary w-100">Clear</a>
+    </div>
+</form>
     <a href="{% url 'transaction_list' %}" class="btn btn-secondary">All</a>
     <a href="{% url 'transaction_list' %}?type=income" class="btn btn-success">Income Only</a>
     <a href="{% url 'transaction_list' %}?type=expense" class="btn btn-danger">Expense Only</a>
