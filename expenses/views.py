@@ -55,3 +55,7 @@ def transaction_list(request):
         'total_expense': transactions.filter(transaction_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0,
     }
     return render(request, 'transaction_list.html', context)
+@login_required
+def category_list(request):
+    categories = Category.objects.filter(user=request.user)
+    return render(request, 'category_list.html', {'categories': categories})
