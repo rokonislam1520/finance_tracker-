@@ -54,7 +54,26 @@
 
         {% block content %}{% endblock %}
     </div>
+<script>
+    const toggle = document.getElementById('darkModeToggle');
+    const body = document.body;
 
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        body.classList.add('dark-mode');
+        toggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    toggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('darkMode', 'enabled');
+            toggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            localStorage.setItem('darkMode', 'disabled');
+            toggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+    });
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
