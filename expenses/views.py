@@ -148,3 +148,23 @@ def user_logout(request):
     logout(request)
     messages.success(request, "Logged out successfully!")
     return redirect('login')
+@login_required
+def export_csv(request):
+    transactions = Transaction.objects.filter(user=request.user).order_by('-date')
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="transactions.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['Date', 'Type', 'Category', 'Description', 'Amount'])
+    
+    for trans in transactions:
+        writer.writerow([
+            trans.date,
+            trans.transaction_type,
+            trans.category.name,
+            trans.description,
+            trans.amount
+        ])
+    
+    return response
