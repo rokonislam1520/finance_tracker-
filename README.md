@@ -1,25 +1,26 @@
-# Personal Finance Tracker
+# 💰 Personal Finance Tracker
 
-A simple and clean Personal Finance Management Web Application built with Django.
+A clean and functional Personal Finance Management App built with **Django**.
 
 ## Features
-- User Registration and Login
-- Add Income and Expense
-- Dashboard with summary and charts
-- Transaction history with filter
-- Budget tracking
+- User Registration & Login/Logout
+- Add, Edit, Delete Income & Expense
+- Dashboard with summary cards and pie chart
+- Transaction list with filters (Type + Date Range)
 - Export transactions to CSV
-- Responsive design
+- Dark Mode Toggle
+- Fully Responsive Design
 
 ## Tech Stack
-- Django
-- SQLite (Development)
+- Django 5.1
+- SQLite
 - Bootstrap 5
 - Chart.js
+- Python
 
-## Setup Instructions
+## How to Run Locally
 
 1. Clone the repository
 2. Create virtual environment:
    ```bash
-   python -m venv venv# finance_tracker-
+   python -m venv venv
